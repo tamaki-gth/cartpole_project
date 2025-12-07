@@ -121,7 +121,7 @@ class Environment():
                 # 報酬を与える
                 if done:  # ステップ数が200経過するか、一定角度以上傾くとdoneはtrueになる
                     #print("done")
-                    if step < 100:
+                    if step < 150:
                         reward = -1  # 失敗したので-1の報酬を与える
                         complete_episodes = 0  # 成功数をリセット
                         #print("ifのほう")
@@ -150,7 +150,7 @@ class Environment():
 
             if is_episode_final:
             #if True:
-                print("night")
+                #print("night")
                 es = np.arange(0, len(step_list))
                 #print(es)
                 #print()
