@@ -150,6 +150,7 @@ class Environment():
 
             if is_episode_final:
             #if True:
+                print("night")
                 es = np.arange(0, len(step_list))
                 #print(es)
                 #print()
