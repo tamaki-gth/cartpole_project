@@ -78,7 +78,7 @@ from matplotlib import animation
 # 最大のステップ数
 MAX_STEPS = 200
 # 最大の試行回数
-NUM_EPISODES = 10000
+NUM_EPISODES = 100000
 
 
 
