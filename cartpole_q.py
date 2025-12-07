@@ -78,7 +78,7 @@ from matplotlib import animation
 # 最大のステップ数
 MAX_STEPS = 200
 # 最大の試行回数
-NUM_EPISODES = 100000
+NUM_EPISODES = 10000
 
 
 
@@ -108,8 +108,8 @@ class Environment():
             observation=observation[0]
             for step in range(MAX_STEPS):
                 # 最後の試行のみ画像を保存する。
-                #if is_episode_final:
-                    #frames.append(self.env.render())
+                if is_episode_final:
+                    frames.append(self.env.render())
                     #print("hana")
 
                 # 行動を求める
@@ -121,7 +121,7 @@ class Environment():
                 # 報酬を与える
                 if done:  # ステップ数が200経過するか、一定角度以上傾くとdoneはtrueになる
                     #print("done")
-                    if step < 150:
+                    if step < 100:
                         reward = -1  # 失敗したので-1の報酬を与える
                         complete_episodes = 0  # 成功数をリセット
                         #print("ifのほう")
@@ -164,13 +164,13 @@ class Environment():
                 #plt.axis('off')
 
 
-                '''def animate(i):
+                def animate(i):
                     patch.set_data(frames[i])
 
                 anim = animation.FuncAnimation(plt.gcf(), animate, frames=len(frames),interval=50)
                 plt.show()
                 
-                anim.save('/content/drive/My Drive/lab activities/movie_cartpole_v0.mp4', writer="ffmpeg")'''
+                '''anim.save('/content/drive/My Drive/lab activities/movie_cartpole_v0.mp4', writer="ffmpeg")'''
 
                 break
 
