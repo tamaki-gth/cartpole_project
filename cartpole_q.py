@@ -160,8 +160,8 @@ class Environment():
                 plt.show()
                 #plt.savefig("cartpole.png")
                 #plt.figure()
-                #patch = plt.imshow(frames[0])
-                #plt.axis('off')
+                patch = plt.imshow(frames[0])
+                plt.axis('off')
 
 
                 def animate(i):
