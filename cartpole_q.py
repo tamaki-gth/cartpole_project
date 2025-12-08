@@ -6,8 +6,8 @@ import numpy as np
 NUM_DIZITIZED = 6
 
 
-GAMMA = 0.9  # 時間割引率
-ETA = 0.1  # 学習係数
+GAMMA = 0.99  # 時間割引率
+ETA = 0.5  # 学習係数
 
 class State:
     def __init__(self, num_states, num_actions):
@@ -121,7 +121,7 @@ class Environment():
                 # 報酬を与える
                 if done:  # ステップ数が200経過するか、一定角度以上傾くとdoneはtrueになる
                     #print("done")
-                    if step < 400:
+                    if step < 100:
                         reward = -1  # 失敗したので-1の報酬を与える
                         complete_episodes = 0  # 成功数をリセット
                         #print("ifのほう")
@@ -175,8 +175,8 @@ class Environment():
                 break
 
             # 10連続成功したら最後の試行を行う
-            if complete_episodes >= 100:
-                print('100回連続成功')
+            if complete_episodes >= 80:
+                print('80回連続成功')
                 is_episode_final = True
 
 TOY = "CartPole-v1"
