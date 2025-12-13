@@ -96,8 +96,8 @@ class Environment():
         self.env=self.env.unwrapped
 
         self.env.force_mag=20.0
-        self.env.masscart=0.5
-        self.env.masspole=0.05
+        self.env.masscart=0.1
+        self.env.masspole=0.01
 
 
     def run(self):
@@ -126,7 +126,7 @@ class Environment():
                 # 報酬を与える
                 if done:  # ステップ数が200経過するか、一定角度以上傾くとdoneはtrueになる
                     #print("done")
-                    if step < 100:
+                    if step < 200:
                         reward = -1  # 失敗したので-1の報酬を与える
                         complete_episodes = 0  # 成功数をリセット
                         #print("ifのほう")
@@ -180,7 +180,7 @@ class Environment():
                 break
 
             # 10連続成功したら最後の試行を行う
-            if complete_episodes >= 80:
+            if complete_episodes >= 100:
                 print('80回連続成功')
                 is_episode_final = True
 
