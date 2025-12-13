@@ -93,6 +93,11 @@ class Environment():
         # Agentを生成
         self.agent = Agent(num_states, num_actions)
         self.env = gym.make("CartPole-v1", render_mode="rgb_array")
+        self.env=self.env.unwrapped
+
+        self.env.force_mag=20.0
+        self.env.masscart=0.5
+        self.env.masspole=0.05
 
 
     def run(self):
