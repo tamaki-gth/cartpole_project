@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 m1=1
-m2=2
+m2=1
 l=0.5
 g=9.8
-J=1
+J=0.5
 F=0
 tau=0.01
 
@@ -31,7 +31,7 @@ def RungeKutta(z,tau,m1,m2,l,J,F,g):
 
 
 z0=np.array([0.0,0.0,0.0,0.1])
-T=5.0
+T=20.0
 N=int(T/tau)
 z_list=[z0]
 
@@ -47,6 +47,6 @@ plt.plot(time,z_array[:,2],label="Position")
 plt.plot(time,z_array[:,3],label="Theta")
 plt.xlabel("Time [s]")
 plt.ylabel("value")
-
+plt.legend()
 plt.show()
 
