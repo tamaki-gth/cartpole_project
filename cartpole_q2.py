@@ -150,9 +150,7 @@ class Environment():
                 action = self.agent.get_action(observation, episode)
                 # 行動a_tの実行により、s_{t+1}, r_{t+1}を求める
                 observation_next, reward, done= self.step(action)
-            
-
-            
+                   
 
                 # 報酬を与える
                 if done:  # ステップ数が200経過するか、一定角度以上傾くとdoneはtrueになる
@@ -198,7 +196,7 @@ class Environment():
                 #plt.figure()
                 #patch = plt.imshow(frames[0])
                 plt.axis('off')
-
+                break
 
                 '''def animate(i):
                     patch.set_data(frames[i])
@@ -211,8 +209,8 @@ class Environment():
                 break'''
 
             # 10連続成功したら最後の試行を行う
-            if complete_episodes >= 100:
-                print('100回連続成功')
+            if complete_episodes >= 400:
+                print('400回連続成功')
                 is_episode_final = True
 
 #TOY = "CartPole-v1"
