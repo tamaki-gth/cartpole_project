@@ -150,12 +150,16 @@ class Environment():
                 action = self.agent.get_action(observation, episode)
                 # 行動a_tの実行により、s_{t+1}, r_{t+1}を求める
                 observation_next, reward, done= self.step(action)
+
+                #MAX_STEPS(495回で成功とする)倒れなかったら成功
+                if step==MAX_STEPS-6:
+                    done=True
                    
 
                 # 報酬を与える
                 if done:  # ステップ数が200経過するか、一定角度以上傾くとdoneはtrueになる
                     #print("done")
-                    if step < 200:
+                    if step < 300:
                         reward = -1  # 失敗したので-1の報酬を与える
                         complete_episodes = 0  # 成功数をリセット
                         #print("ifのほう")
@@ -184,7 +188,7 @@ class Environment():
 
             if is_episode_final:
             #if True:
-                #print("night")
+               #print("night")
                 es = np.arange(0, len(step_list))
                 #print(es)
                 #print()
