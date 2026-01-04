@@ -106,7 +106,7 @@ class Environment():
         self.reset()
 
     def reset(self):
-        self.z=np.array([0.0,0.0,0.1,0.0])
+        self.z=np.random.uniform(low=-0.05,high=0.05,size=4)
         return self.z
 
     def step(self,action):
@@ -217,11 +217,36 @@ class Environment():
                 print('400回連続成功')
                 is_episode_final = True
 
+
+    def evaluate_policy(self,num_eval_episodes=100):
+        results=[]
+        for ep in range(num_eval_episodes):
+            observation=self.reset()
+            steps=0
+            for step in range(MAX_STEPS):
+                action=np.argmax(self.agent.state.q_table[self.agent.state.analog2digitize(observation)])
+                observation,_,done=self.step(action)
+                steps+=1
+                if done:
+                    break
+            results.append(steps)
+        return results
+                
+
 #TOY = "CartPole-v1"
 
 def main():
     cartpole = Environment()
     cartpole.run()
+    results=cartpole.evaluate_policy(num_eval_episodes=100)
+    
+    plt.figure()
+    plt.plot(results)
+    plt.xlabel("Evaluation Episodes")
+    plt.ylabel("Steps suvived")
+    plt.show()
+    print(results)
+    
     '''test=Agent(4,2)
     print(test.state.q_table)
     test.update_Q_function(np.array([-0.05012925, -0.3906783 ,  0.01841577,  0.6080843 ], dtype='float32'),0,0,np.array([-0.06185919, -0.00114511,  0.03700262,  0.0383729 ],dtype='float32'))
