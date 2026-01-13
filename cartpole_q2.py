@@ -79,6 +79,7 @@ from matplotlib import animation
 MAX_STEPS = 500
 # 最大の試行回数
 NUM_EPISODES = 10000
+MAX_STEPS_EVAL=2000
 
 from cartpole_EOM2 import RungeKutta,m1,m2,l,J,g,tau 
 from cartpole_mv import save_animation
@@ -135,6 +136,10 @@ class Environment():
         # 試行数分繰り返す
 #        for episode in range(NUM_EPISODES):
             #print(        # 試行数分繰り返す
+
+        initial_eval = self.evaluate_policy()
+        self.eval_history.append(initial_eval)
+            
         for episode in range(NUM_EPISODES):
             #print("エピソード")
             observation = self.reset()  # 環境の初期化
@@ -168,7 +173,7 @@ class Environment():
                 # 報酬を与える
                 if done:  # ステップ数が200経過するか、一定角度以上傾くとdoneはtrueになる
                     #print("done")
-                    if step < 300:
+                    if step < 400:
                         reward = -1  # 失敗したので-1の報酬を与える
                         complete_episodes = 0  # 成功数をリセット
                         #print("ifのほう")
@@ -220,15 +225,7 @@ class Environment():
                 
                 break
 
-                '''def animate(i):
-                    patch.set_data(frames[i])
-
-                anim = animation.FuncAnimation(plt.gcf(), animate, frames=len(frames),interval=50)
-                #plt.show()
                 
-                anim.save("/home/tamaki/movie_cartpole_v0.mp4", writer="ffmpeg")
-
-                break'''
 
             # 10連続成功したら最後の試行を行う
             if complete_episodes >= 400:
@@ -236,10 +233,11 @@ class Environment():
                 is_episode_final = True
 
 
+
     def evaluate_policy(self):
         observation=self.reset()
         steps=0
-        for step in range(MAX_STEPS):
+        for step in range(MAX_STEPS_EVAL):
             action=np.argmax(self.agent.state.q_table[self.agent.state.analog2digitize(observation)])
             observation,_,done=self.step(action)
             steps+=1
