@@ -1,4 +1,4 @@
-import gymnasium as gym
+
 
 
 import numpy as np
@@ -81,6 +81,7 @@ MAX_STEPS = 500
 NUM_EPISODES = 10000
 
 from cartpole_EOM2 import RungeKutta,m1,m2,l,J,g,tau 
+from cartpole_mv import save_animation
 
 class Environment():
     def __init__(self):
@@ -106,7 +107,7 @@ class Environment():
         self.reset()
 
     def reset(self):
-        self.z=np.random.uniform(low=-0.05,high=0.05,size=4)
+        self.z=np.array([0.0,0.0,0.05,0.0])
         return self.z
 
     def step(self,action):
@@ -128,17 +129,22 @@ class Environment():
         complete_episodes = 0 # 成功数
         step_list = []
         is_episode_final = False  # 最後の試行
-        #frames = []  # 画像を保存する変数
-
+        #frames = []   画像を保存する変数
+        self.eval_history=[]
+  
         # 試行数分繰り返す
 #        for episode in range(NUM_EPISODES):
             #print(        # 試行数分繰り返す
         for episode in range(NUM_EPISODES):
             #print("エピソード")
             observation = self.reset()  # 環境の初期化
+
+            #最後のエピソードなら軌道を記録する
+            record=is_episode_final
+            if record:
+                frames=[]
                 
-                
-        
+                        
             for step in range(MAX_STEPS):
                 # 最後の試行のみ画像を保存する。
                 #if is_episode_final:
@@ -150,6 +156,9 @@ class Environment():
                 action = self.agent.get_action(observation, episode)
                 # 行動a_tの実行により、s_{t+1}, r_{t+1}を求める
                 observation_next, reward, done= self.step(action)
+
+                if record:
+                    frames.append(observation_next.copy())
 
                 #MAX_STEPS(495回で成功とする)倒れなかったら成功
                 if step==MAX_STEPS-6:
@@ -186,7 +195,13 @@ class Environment():
                     #print('complete_episodes',complete_episodes)
                     break
 
-            if is_episode_final:
+            #各エピソード終了ごとに評価
+            eval_steps = self.evaluate_policy()
+            self.eval_history.append(eval_steps)
+            #print(f"Episode {episode}: evaluation = {eval_steps} steps")
+
+
+            if is_episode_final and record:
             #if True:
                #print("night")
                 es = np.arange(0, len(step_list))
@@ -200,6 +215,9 @@ class Environment():
                 #plt.figure()
                 #patch = plt.imshow(frames[0])
                 plt.axis('off')
+                frames = np.array(frames)
+                save_animation(frames,l)
+                
                 break
 
                 '''def animate(i):
@@ -218,19 +236,17 @@ class Environment():
                 is_episode_final = True
 
 
-    def evaluate_policy(self,num_eval_episodes=100):
-        results=[]
-        for ep in range(num_eval_episodes):
-            observation=self.reset()
-            steps=0
-            for step in range(MAX_STEPS):
-                action=np.argmax(self.agent.state.q_table[self.agent.state.analog2digitize(observation)])
-                observation,_,done=self.step(action)
-                steps+=1
-                if done:
-                    break
-            results.append(steps)
-        return results
+    def evaluate_policy(self):
+        observation=self.reset()
+        steps=0
+        for step in range(MAX_STEPS):
+            action=np.argmax(self.agent.state.q_table[self.agent.state.analog2digitize(observation)])
+            observation,_,done=self.step(action)
+            steps+=1
+            if done:
+                break
+            
+        return steps
                 
 
 #TOY = "CartPole-v1"
@@ -238,14 +254,14 @@ class Environment():
 def main():
     cartpole = Environment()
     cartpole.run()
-    results=cartpole.evaluate_policy(num_eval_episodes=100)
+    #results=cartpole.evaluate_policy(num_eval_episodes=100)
     
     plt.figure()
-    plt.plot(results)
+    plt.plot(cartpole.eval_history)
     plt.xlabel("Evaluation Episodes")
-    plt.ylabel("Steps suvived")
+    plt.ylabel("Steps survived")
     plt.show()
-    print(results)
+    #print(results)
     
     '''test=Agent(4,2)
     print(test.state.q_table)
