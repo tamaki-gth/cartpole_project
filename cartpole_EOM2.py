@@ -18,8 +18,8 @@ def f(z,m1,m2,l,J,F,g):
 
     h=A1_inv@A2
 
-    return np.array([h[0,0],h[1,0],x_dot,theta_dot])
-
+    #return np.array([h[0,0],h[1,0],x_dot,theta_dot])
+    return np.array([x_dot, h[0,0], theta_dot, h[1,0]])
 
 def RungeKutta(z,tau,m1,m2,l,J,F,g):
     k1=f(z,m1,m2,l,J,F,g)
