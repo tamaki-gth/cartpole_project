@@ -132,6 +132,7 @@ class Environment():
         is_episode_final = False  # 最後の試行
         #frames = []   画像を保存する変数
         self.eval_history=[]
+        self.reward_history=[]
   
         # 試行数分繰り返す
 #        for episode in range(NUM_EPISODES):
@@ -203,7 +204,7 @@ class Environment():
             #各エピソード終了ごとに評価
             eval_steps = self.evaluate_policy()
             self.eval_history.append(eval_steps)
-            #print(f"Episode {episode}: evaluation = {eval_steps} steps")
+            self.reward_history.append(step+1)
 
 
             if is_episode_final and record:
@@ -260,6 +261,21 @@ def main():
     plt.ylabel("Steps survived")
     plt.show()
     #print(results)
+
+    window=100
+    reward_array=np.array(cartpole.reward_history)
+    # 直近100エピソードの移動平均（100エピソード目から始まる）
+    moving_avg = np.convolve(reward_array, np.ones(window)/window, mode='valid')
+
+    plt.figure()
+    plt.plot(np.arange(window, window + len(moving_avg)), moving_avg)
+    plt.xlabel("Episode")
+    plt.ylabel("Average reward (last 100 episodes)")
+    plt.title("Q-learning performance (moving average)")
+    plt.show()
+
+    np.set_printoptions(threshold=np.inf)
+    print(cartpole.agent.state.q_table)
     
     '''test=Agent(4,2)
     print(test.state.q_table)
