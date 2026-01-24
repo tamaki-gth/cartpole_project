@@ -10,28 +10,41 @@ GAMMA = 0.99  # 時間割引率
 ETA = 0.5  # 学習係数
 
 class State:
-    def __init__(self, num_states, num_actions):
+    def __init__(self, num_actions):
         # 行動数を取得
         self.num_actions = num_actions
 
         # Qテーブルを作成　(分割数^状態数)×(行動数)
-        self.q_table = np.random.uniform(low=-1, high=1, size=(NUM_DIZITIZED**num_states, num_actions))
+        self.q_table = np.random.uniform(low=-1, high=1, size=(3*2*2, num_actions))
 
-
-    def bins(self, clip_min, clip_max, num):
-        # 観測した状態デジタル変換する閾値を求める
-        return np.linspace(clip_min, clip_max, num + 1)[1:-1]
 
     def analog2digitize(self, observation):
         #状態の離散化
         cart_pos, cart_v, pole_angle, pole_v = observation
-        digitized = [
-            np.digitize(cart_pos, bins=self.bins(-2.4, 2.4, NUM_DIZITIZED)),
-            np.digitize(cart_v, bins=self.bins(-3.0, 3.0, NUM_DIZITIZED)),
-            np.digitize(pole_angle, bins=self.bins(-0.5, 0.5, NUM_DIZITIZED)),
-            np.digitize(pole_v, bins=self.bins(-2.0, 2.0, NUM_DIZITIZED))
-        ]
-        return sum([x * (NUM_DIZITIZED**i) for i, x in enumerate(digitized)])
+
+        #cart_vの状態
+        if cart_v<-0.5:
+            v_state=0
+        elif cart_v>0.5:
+            v_state=2
+        else:
+            v_state=1
+
+        #pole_angleの状態
+        if pole_angle<0:
+            theta_state=0
+        else:
+            theta_state=1
+
+        #pole_vの状態
+        if pole_angle<0:
+            omega_state=0
+        else:
+            omega_state=1
+
+        state=v_state+3*theta_state+3*2*omega_state
+        
+        return state
 
     def update_Q_table(self, observation, action, reward, observation_next):
         # 状態の離散化
@@ -57,9 +70,9 @@ class State:
         return action
 
 class Agent:
-    def __init__(self, num_states, num_actions):
+    def __init__(self, num_actions):
         # 環境を生成
-        self.state = State(num_states, num_actions)
+        self.state = State(num_actions)
 
     def update_Q_function(self, observation, action, reward, observation_next):
         # Qテーブルの更新
@@ -94,10 +107,10 @@ class Environment():
         #num_actions = self.env.action_space.n
         # Agentを生成
 
-        num_states=4
+    
         num_actions=2
         
-        self.agent = Agent(num_states, num_actions)
+        self.agent = Agent(num_actions)
         #self.env = gym.make("CartPole-v1", render_mode="rgb_array")
         #self.env=self.env.unwrapped
 
