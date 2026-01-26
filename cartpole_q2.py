@@ -37,7 +37,7 @@ class State:
             theta_state=1
 
         #pole_vの状態
-        if pole_angle<0:
+        if pole_v<0:
             omega_state=0
         else:
             omega_state=1
@@ -108,7 +108,7 @@ class Environment():
         # Agentを生成
 
     
-        num_actions=2
+        num_actions=3
         
         self.agent = Agent(num_actions)
         #self.env = gym.make("CartPole-v1", render_mode="rgb_array")
@@ -127,6 +127,8 @@ class Environment():
     def step(self,action):
         if action==0:
             F=-10.0
+        elif action==1:
+            F=0.0
         else:
             F=+10.0
 
@@ -162,7 +164,7 @@ class Environment():
             record=is_episode_final
             if record:
                 frames=[]
-                
+                actions=[]
                         
             for step in range(MAX_STEPS):
                 # 最後の試行のみ画像を保存する。
@@ -178,6 +180,7 @@ class Environment():
 
                 if record:
                     frames.append(observation_next.copy())
+                    actions.append(action)
 
                 #MAX_STEPS(495回で成功とする)倒れなかったら成功
                 if step==MAX_STEPS-6:
@@ -235,7 +238,7 @@ class Environment():
                 #patch = plt.imshow(frames[0])
                 plt.axis('off')
                 frames = np.array(frames)
-                save_animation(frames,l)
+                save_animation(frames,l,actions)
                 
                 break
 
@@ -276,9 +279,9 @@ def main():
     #print(results)
 
     window=100
-    reward_array=np.array(cartpole.reward_history)
+    eval_array=np.array(cartpole.eval_history)
     # 直近100エピソードの移動平均（100エピソード目から始まる）
-    moving_avg = np.convolve(reward_array, np.ones(window)/window, mode='valid')
+    moving_avg = np.convolve(eval_array, np.ones(window)/window, mode='valid')
 
     plt.figure()
     plt.plot(np.arange(window, window + len(moving_avg)), moving_avg)
